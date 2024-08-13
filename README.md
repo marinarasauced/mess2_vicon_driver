@@ -1,5 +1,20 @@
 # Vicon receiver for ROS 2 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/andreacamisa/ros2-vicon-receiver)
 
+DO NOT FOLLOW THESE INSTRUCTIONS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 **ros2-vicon-receiver** is a ROS 2 package, written in C++, that retrieves data from Vicon software and publishes it on ROS 2 topics. The code is partly derived from a mixture of [Vicon-ROS2](https://github.com/aheuillet/Vicon-ROS2) and [Vicon bridge](https://github.com/ethz-asl/vicon_bridge).
 
 This is NOT an official ROS 2 package and is not supported. The package has been successfully tested with ROS 2 Dashing Diademata, ROS 2 Foxy, ROS 2 Galactic and ROS 2 Humble on the operating systems Ubuntu 18.04 Bionic Beaver, Ubuntu 20.04 Focal Fossa and MacOS 10.13 High Sierra.
