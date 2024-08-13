@@ -49,3 +49,9 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+.vscode
+
+vicon_ws/build
+vicon_ws/install
+vicon_ws/log

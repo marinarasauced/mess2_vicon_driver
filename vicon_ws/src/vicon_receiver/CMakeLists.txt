@@ -24,27 +24,16 @@ include_directories(
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Position.msg"
-)
-
-ament_export_dependencies(rosidl_default_runtime)
 
 add_executable(vicon_client src/vicon_receiver/communicator.cpp src/vicon_receiver/publisher.cpp)
 target_link_libraries(vicon_client ViconDataStreamSDK_CPP ${Boost_LIBRARIES})
-ament_target_dependencies(vicon_client "rclcpp")
+ament_target_dependencies(vicon_client "rclcpp" "geometry_msgs")
 
 get_default_rmw_implementation(rmw_implementation)
 find_package("${rmw_implementation}" REQUIRED)
 get_rmw_typesupport(typesupport_impls "${rmw_implementation}" LANGUAGE "cpp")
-
-foreach(typesupport_impl ${typesupport_impls})
-  rosidl_target_interfaces(vicon_client
-    ${PROJECT_NAME} "rosidl_typesupport_cpp"
-  )
-endforeach()
 
 install(TARGETS vicon_client DESTINATION lib/${PROJECT_NAME})
 
