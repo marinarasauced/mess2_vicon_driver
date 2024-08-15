@@ -34,18 +34,18 @@ void Publisher::publish(PositionStruct p)
     msg->transform.rotation = quat_true;
     
     // publish message
-    // bool all_zero = true;
-    // if (msg->transform.translation.x != 0.0 || msg->transform.translation.y != 0.0 || msg->transform.translation.z != 0.0)
-    //     {
-    //         all_zero = false;
-    //     }
-    // if (msg->transform.rotation.x != 0.0 || msg->transform.rotation.y != 0.0 || msg->transform.rotation.z != 0.0 || msg->transform.rotation.w != 0.0)
-    // {
-    //     all_zero = false;
-    // }
-    // if (!all_zero)
-    // {
-    //     position_publisher_->publish(*msg);
-    // }  
-    position_publisher_->publish(*msg);
+    bool all_zero = true;
+    if (msg->transform.translation.x != 0.0 || msg->transform.translation.y != 0.0 || msg->transform.translation.z != 0.0)
+        {
+            all_zero = false;
+        }
+    if (msg->transform.rotation.x != 0.0 || msg->transform.rotation.y != 0.0 || msg->transform.rotation.z != 0.0 || msg->transform.rotation.w != 0.0)
+    {
+        all_zero = false;
+    }
+    if (!all_zero)
+    {
+        position_publisher_->publish(*msg);
+    }  
+    // position_publisher_->publish(*msg);
 }
