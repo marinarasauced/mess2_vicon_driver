@@ -10,10 +10,10 @@
 #include <string>
 #include <unistd.h>
 #include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
 
 using namespace std;
 
-// Main Node class
 class Communicator : public rclcpp::Node
 {
 private:
@@ -23,21 +23,17 @@ private:
     string ns_name;
     map<string, Publisher> pub_map;
     boost::mutex mutex;
+    string agents_dir;
 
 public:
     Communicator();
 
-    // Initialises the connection to the DataStream server
     bool connect();
 
-    // Stops the current connection to a DataStream server (if any).
     bool disconnect();
 
-    // Main loop that request frames from the currently connected DataStream server and send the 
-    // received segment data to the Publisher class.
     void get_frame();
 
-    // functions to create a segment publisher in a new thread
     void create_publisher(const string subject_name, const string segment_name);
     void create_publisher_thread(const string subject_name, const string segment_name);
 };

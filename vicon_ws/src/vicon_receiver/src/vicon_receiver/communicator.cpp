@@ -1,21 +1,24 @@
+#include <yaml-cpp/yaml.h>
 #include "vicon_receiver/communicator.hpp"
+#include "mess2_plugins/orientation.hpp"
+
 
 using namespace ViconDataStreamSDK::CPP;
 
 Communicator::Communicator() : Node("vicon")
 {
-    // get parameters
     this->declare_parameter<std::string>("hostname", "127.0.0.1");
     this->declare_parameter<int>("buffer_size", 200);
     this->declare_parameter<std::string>("namespace", "vicon");
+    this->declare_parameter<std::string>("agents_dir", "/home/mess2/mess2/agents");
     this->get_parameter("hostname", hostname);
     this->get_parameter("buffer_size", buffer_size);
     this->get_parameter("namespace", ns_name);
+    this->get_parameter("agents_dir", agents_dir);
 }
 
 bool Communicator::connect()
 {
-    // connect to server
     string msg = "Connecting to " + hostname + " ...";
     cout << msg << endl;
     int counter = 0;
@@ -33,7 +36,6 @@ bool Communicator::connect()
     msg = "Connection successfully established with " + hostname;
     cout << msg << endl;
 
-    // perform further initialization
     vicon_client.EnableSegmentData();
     vicon_client.EnableMarkerData();
     vicon_client.EnableUnlabeledMarkerData();
@@ -81,18 +83,12 @@ void Communicator::get_frame()
 
     for (unsigned int subject_index = 0; subject_index < subject_count; ++subject_index)
     {
-        // get the subject name
         string subject_name = vicon_client.GetSubjectName(subject_index).SubjectName;
-
-        // count the number of segments
         unsigned int segment_count = vicon_client.GetSegmentCount(subject_name).SegmentCount;
 
         for (unsigned int segment_index = 0; segment_index < segment_count; ++segment_index)
         {
-            // get the segment name
             string segment_name = vicon_client.GetSegmentName(subject_name, segment_index).SegmentName;
-
-            // get position of segment
             PositionStruct current_position;
             Output_GetSegmentGlobalTranslation trans =
                 vicon_client.GetSegmentGlobalTranslation(subject_name, segment_name);
@@ -110,12 +106,10 @@ void Communicator::get_frame()
             current_position.translation_type = "Global";
             current_position.frame_number = frame_number.FrameNumber;
 
-            // send position to publisher
             boost::mutex::scoped_try_lock lock(mutex);
 
             if (lock.owns_lock())
             {
-                // get publisher
                 pub_it = pub_map.find(subject_name + "/" + segment_name);
                 if (pub_it != pub_map.end())
                 {
@@ -128,7 +122,6 @@ void Communicator::get_frame()
                 }
                 else
                 {
-                    // create publisher if not already available
                     lock.unlock();
                     create_publisher(subject_name, segment_name);
                 }
@@ -150,11 +143,37 @@ void Communicator::create_publisher_thread(const string subject_name, const stri
     string msg = "Creating publisher for segment " + segment_name + " from subject " + subject_name;
     cout << msg << endl;
 
-    // create publisher
-    boost::mutex::scoped_lock lock(mutex);
-    pub_map.insert(std::map<std::string, Publisher>::value_type(key, Publisher(topic_name, this)));
+    geometry_msgs::msg::Quaternion quat_diff;
 
-    // we don't need the lock anymore, since rest is protected by is_ready
+    string yaml_path = agents_dir + "/" + subject_name + "/calibration.yaml";
+
+    try {
+        YAML::Node config = YAML::LoadFile(yaml_path);
+        if (config["quaternion"]) {
+            const YAML::Node& quat_node = config["quaternion"];
+            quat_diff.x = quat_node["x"].as<double>();
+            quat_diff.y = quat_node["y"].as<double>();
+            quat_diff.z = quat_node["z"].as<double>();
+            quat_diff.w = quat_node["w"].as<double>();
+        } else {
+            std::cerr << "Quaternion data not found in YAML file, using unit quaternion: " << yaml_path << std::endl;
+            quat_diff.x = 0.0;
+            quat_diff.y = 0.0;
+            quat_diff.z = 0.0;
+            quat_diff.w = 1.0;
+        }
+    } catch (const YAML::Exception& e) {
+        std::cerr << "Error reading YAML file, using unit quaternion: " << e.what() << std::endl;
+        quat_diff.x = 0.0;
+        quat_diff.y = 0.0;
+        quat_diff.z = 0.0;
+        quat_diff.w = 1.0;
+    }
+    geometry_msgs::msg::Quaternion quat_diff_ = mess2_plugins::normalize_quat(quat_diff);
+
+    boost::mutex::scoped_lock lock(mutex);
+    pub_map.insert(std::map<std::string, Publisher>::value_type(key, Publisher(topic_name, this, quat_diff_)));
+
     lock.unlock();
 }
 

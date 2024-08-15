@@ -3,8 +3,9 @@
 #include <unistd.h>
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "geometry_msgs/msg/quaternion.hpp"
 
-// Struct used to hold segment data to transmit to the Publisher class.
+
 struct PositionStruct
 {
     double translation[3];
@@ -17,7 +18,6 @@ struct PositionStruct
 } typedef PositionStruct;
 
 
-// Class that allows segment data to be published in a ROS2 topic.
 class Publisher
 {
 private:
@@ -25,12 +25,11 @@ private:
 
 public:
     bool is_ready = false;
+    geometry_msgs::msg::Quaternion quat_diff_;
     
     rclcpp::Node *node_;
-    Publisher(std::string topic_name, rclcpp::Node* node);
+    Publisher(std::string topic_name, rclcpp::Node* node, geometry_msgs::msg::Quaternion quat_diff);
 
-    // Publishes the given position in the ROS2 topic whose name is indicated in
-    // the constructor.
     void publish(PositionStruct p);
 };
 
