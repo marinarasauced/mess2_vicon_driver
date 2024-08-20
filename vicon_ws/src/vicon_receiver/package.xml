@@ -7,11 +7,10 @@
   <maintainer email="info@opt4smart.eu">OPT4SMART group</maintainer>
   <license>GNU General Public License v3</license>
   
-  <build_depend>rclcpp</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-
-  <exec_depend>rclcpp</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>mess2_msgs</depend>
+  <depend>mess2_plugins</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

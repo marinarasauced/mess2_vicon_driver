@@ -1,7 +1,7 @@
 #include "vicon_receiver/publisher.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "mess2_plugins/orientation.hpp"
+#include "mess2_plugins/rotation.hpp"
 
 Publisher::Publisher(std::string topic_name, rclcpp::Node* node, geometry_msgs::msg::Quaternion quat_diff) : node_(node)
 {

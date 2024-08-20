@@ -1,6 +1,6 @@
 #include <yaml-cpp/yaml.h>
 #include "vicon_receiver/communicator.hpp"
-#include "mess2_plugins/orientation.hpp"
+#include "mess2_plugins/rotation.hpp"
 
 
 using namespace ViconDataStreamSDK::CPP;
