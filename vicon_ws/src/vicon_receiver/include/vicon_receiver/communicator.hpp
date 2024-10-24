@@ -38,6 +38,7 @@ public:
     void create_publisher_thread(const string subject_name, const string segment_name);
 
     geometry_msgs::msg::Quaternion normalize_quat(geometry_msgs::msg::Quaternion quat);
+    double fps_;
 };
 
 #endif // COMMUNICATOR_HPP

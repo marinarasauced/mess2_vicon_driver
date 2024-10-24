@@ -10,10 +10,12 @@ Communicator::Communicator() : Node("vicon")
     this->declare_parameter<int>("buffer_size", 200);
     this->declare_parameter<std::string>("namespace", "vicon");
     this->declare_parameter<std::string>("actors_dir", "/home/mess2/mess2/actors");
+    this->declare_parameter<double>("fps", 40.0);
     this->get_parameter("hostname", hostname);
     this->get_parameter("buffer_size", buffer_size);
     this->get_parameter("namespace", ns_name);
     this->get_parameter("actors_dir", actors_dir);
+    this->get_parameter("fps", fps_);
 }
 
 bool Communicator::connect()
@@ -194,9 +196,11 @@ int main(int argc, char** argv)
     rclcpp::init(argc, argv);
     auto node = std::make_shared<Communicator>();
     node->connect();
+    auto rate = rclcpp::Rate(node->fps_);
 
     while (rclcpp::ok()){
         node->get_frame();
+        rate.sleep();
     }
 
     node->disconnect();
