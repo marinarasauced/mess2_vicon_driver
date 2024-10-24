@@ -27,8 +27,6 @@ find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(yaml-cpp REQUIRED)
-find_package(mess2_msgs REQUIRED)
-find_package(mess2_plugins REQUIRED)
 
 add_executable(vicon_client src/vicon_receiver/communicator.cpp src/vicon_receiver/publisher.cpp)
 
@@ -41,7 +39,7 @@ target_include_directories(
   $<BUILD_INTERFACE:${mess2_plugins_INCLUDE_DIRS}>
 )
 
-ament_target_dependencies(vicon_client "rclcpp" "geometry_msgs" "mess2_plugins" "mess2_msgs")
+ament_target_dependencies(vicon_client "rclcpp" "geometry_msgs")
 
 get_default_rmw_implementation(rmw_implementation)
 find_package("${rmw_implementation}" REQUIRED)

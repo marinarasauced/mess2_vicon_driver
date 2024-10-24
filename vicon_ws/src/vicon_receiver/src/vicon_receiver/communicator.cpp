@@ -1,6 +1,5 @@
 #include <yaml-cpp/yaml.h>
 #include "vicon_receiver/communicator.hpp"
-#include "mess2_plugins/rotation.hpp"
 
 
 using namespace ViconDataStreamSDK::CPP;
@@ -10,11 +9,11 @@ Communicator::Communicator() : Node("vicon")
     this->declare_parameter<std::string>("hostname", "127.0.0.1");
     this->declare_parameter<int>("buffer_size", 200);
     this->declare_parameter<std::string>("namespace", "vicon");
-    this->declare_parameter<std::string>("agents_dir", "/home/mess2/mess2/agents");
+    this->declare_parameter<std::string>("actors_dir", "/home/mess2/mess2/actors");
     this->get_parameter("hostname", hostname);
     this->get_parameter("buffer_size", buffer_size);
     this->get_parameter("namespace", ns_name);
-    this->get_parameter("agents_dir", agents_dir);
+    this->get_parameter("actors_dir", actors_dir);
 }
 
 bool Communicator::connect()
@@ -145,7 +144,7 @@ void Communicator::create_publisher_thread(const string subject_name, const stri
 
     geometry_msgs::msg::Quaternion quat_diff;
 
-    string yaml_path = agents_dir + "/" + subject_name + "/calibration.yaml";
+    string yaml_path = actors_dir + "/" + subject_name + "/calibration.yaml";
 
     try {
         YAML::Node config = YAML::LoadFile(yaml_path);
@@ -169,12 +168,25 @@ void Communicator::create_publisher_thread(const string subject_name, const stri
         quat_diff.z = 0.0;
         quat_diff.w = 1.0;
     }
-    geometry_msgs::msg::Quaternion quat_diff_ = mess2_plugins::normalize_quat(quat_diff);
+    geometry_msgs::msg::Quaternion quat_diff_ = normalize_quat(quat_diff);
 
     boost::mutex::scoped_lock lock(mutex);
     pub_map.insert(std::map<std::string, Publisher>::value_type(key, Publisher(topic_name, this, quat_diff_)));
 
     lock.unlock();
+}
+
+geometry_msgs::msg::Quaternion Communicator::normalize_quat(geometry_msgs::msg::Quaternion quat) {
+        
+    geometry_msgs::msg::Quaternion quat_norm;
+
+    double magnitude = std::sqrt(quat.x * quat.x + quat.y * quat.y + quat.z * quat.z + quat.w * quat.w);
+    quat_norm.x = quat.x / magnitude;
+    quat_norm.y = quat.y / magnitude;
+    quat_norm.z = quat.z / magnitude;
+    quat_norm.w = quat.w / magnitude;
+
+    return quat_norm;
 }
 
 int main(int argc, char** argv)

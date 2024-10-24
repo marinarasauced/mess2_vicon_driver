@@ -23,7 +23,7 @@ private:
     string ns_name;
     map<string, Publisher> pub_map;
     boost::mutex mutex;
-    string agents_dir;
+    string actors_dir;
 
 public:
     Communicator();
@@ -36,6 +36,8 @@ public:
 
     void create_publisher(const string subject_name, const string segment_name);
     void create_publisher_thread(const string subject_name, const string segment_name);
+
+    geometry_msgs::msg::Quaternion normalize_quat(geometry_msgs::msg::Quaternion quat);
 };
 
 #endif // COMMUNICATOR_HPP

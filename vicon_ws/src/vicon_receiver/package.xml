@@ -9,8 +9,6 @@
   
   <depend>rclcpp</depend>
   <depend>geometry_msgs</depend>
-  <depend>mess2_msgs</depend>
-  <depend>mess2_plugins</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

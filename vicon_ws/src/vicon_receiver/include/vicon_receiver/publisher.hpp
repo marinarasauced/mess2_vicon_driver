@@ -31,6 +31,8 @@ public:
     Publisher(std::string topic_name, rclcpp::Node* node, geometry_msgs::msg::Quaternion quat_diff);
 
     void publish(PositionStruct p);
+
+    geometry_msgs::msg::Quaternion multiply_two_quats(geometry_msgs::msg::Quaternion quat1, geometry_msgs::msg::Quaternion quat2);
 };
 
 #endif

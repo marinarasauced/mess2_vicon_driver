@@ -1,7 +1,6 @@
 #include "vicon_receiver/publisher.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "mess2_plugins/rotation.hpp"
 
 Publisher::Publisher(std::string topic_name, rclcpp::Node* node, geometry_msgs::msg::Quaternion quat_diff) : node_(node)
 {
@@ -25,7 +24,7 @@ void Publisher::publish(PositionStruct p)
     quat_meas.w = p.rotation[3];
 
     geometry_msgs::msg::Quaternion quat_true;
-    quat_true = mess2_plugins::multiply_two_quats(quat_diff_, quat_meas);
+    quat_true = multiply_two_quats(quat_diff_, quat_meas);
 
     // fill transform    
     msg->transform.translation.x = p.translation[0] / 1000.0;
@@ -49,3 +48,14 @@ void Publisher::publish(PositionStruct p)
     }  
     // position_publisher_->publish(*msg);
 }
+
+geometry_msgs::msg::Quaternion Publisher::multiply_two_quats(geometry_msgs::msg::Quaternion quat1, geometry_msgs::msg::Quaternion quat2) {
+        geometry_msgs::msg::Quaternion quat_product;
+        
+        quat_product.x = quat1.w * quat2.x + quat1.x * quat2.w + quat1.y * quat2.z - quat1.z * quat2.y;
+        quat_product.y = quat1.w * quat2.y - quat1.x * quat2.z + quat1.y * quat2.w + quat1.z * quat2.x;
+        quat_product.z = quat1.w * quat2.z + quat1.x * quat2.y - quat1.y * quat2.x + quat1.z * quat2.w;
+        quat_product.w = quat1.w * quat2.w - quat1.x * quat2.x - quat1.y * quat2.y - quat1.z * quat2.z;
+
+        return quat_product;
+    }
