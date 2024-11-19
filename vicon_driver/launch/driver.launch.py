@@ -11,7 +11,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             "parameters",
-            default_value=FindPackageShare(package="vicon_driver").find("vicon_driver")+"/launch/driver.yaml",
+            default_value=FindPackageShare(package="vicon_driver").find("vicon_driver")+"/launch/parameters.yaml",
             description="path to the parameters file"
         ),
 
