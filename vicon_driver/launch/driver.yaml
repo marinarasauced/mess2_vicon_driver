@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    namespace: "vicon"
+    hostname: "192.168.0.45"
+    buffer_size: 200
+    fps: 40.0
+    path_to_calibrations: "/home/mess2/mess2/calibrations"

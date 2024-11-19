@@ -1,5 +1,5 @@
 #include <yaml-cpp/yaml.h>
-#include "vicon_receiver/communicator.hpp"
+#include "vicon_driver/communicator.hpp"
 
 
 using namespace ViconDataStreamSDK::CPP;
@@ -9,12 +9,12 @@ Communicator::Communicator() : Node("vicon")
     this->declare_parameter<std::string>("hostname", "127.0.0.1");
     this->declare_parameter<int>("buffer_size", 200);
     this->declare_parameter<std::string>("namespace", "vicon");
-    this->declare_parameter<std::string>("actors_dir", "/home/mess2/mess2/actors");
+    this->declare_parameter<std::string>("path_to_calibrations", "/home/mess2/mess2/actors");
     this->declare_parameter<double>("fps", 40.0);
     this->get_parameter("hostname", hostname);
     this->get_parameter("buffer_size", buffer_size);
     this->get_parameter("namespace", ns_name);
-    this->get_parameter("actors_dir", actors_dir);
+    this->get_parameter("calibrations", calibrations);
     this->get_parameter("fps", fps_);
 }
 
@@ -146,7 +146,7 @@ void Communicator::create_publisher_thread(const string subject_name, const stri
 
     geometry_msgs::msg::Quaternion quat_diff;
 
-    string yaml_path = actors_dir + "/" + subject_name + "/calibration.yaml";
+    string yaml_path = calibrations + "/" + subject_name + "/calibration.yaml";
 
     try {
         YAML::Node config = YAML::LoadFile(yaml_path);
