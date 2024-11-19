@@ -23,7 +23,7 @@ private:
     string ns_name;
     map<string, Publisher> pub_map;
     boost::mutex mutex;
-    string actors_dir;
+    string calibrations;
 
 public:
     Communicator();
