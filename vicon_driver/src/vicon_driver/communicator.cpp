@@ -14,7 +14,7 @@ Communicator::Communicator() : Node("vicon")
     this->get_parameter("hostname", hostname);
     this->get_parameter("buffer_size", buffer_size);
     this->get_parameter("namespace", ns_name);
-    this->get_parameter("calibrations", calibrations);
+    this->get_parameter("path_to_calibrations", calibrations);
     this->get_parameter("fps", fps_);
 }
 
@@ -150,12 +150,11 @@ void Communicator::create_publisher_thread(const string subject_name, const stri
 
     try {
         YAML::Node config = YAML::LoadFile(yaml_path);
-        if (config["quaternion"]) {
-            const YAML::Node& quat_node = config["quaternion"];
-            quat_diff.x = quat_node["x"].as<double>();
-            quat_diff.y = quat_node["y"].as<double>();
-            quat_diff.z = quat_node["z"].as<double>();
-            quat_diff.w = quat_node["w"].as<double>();
+        if (config["x"] && config["y"] && config["z"] && config["w"]) {
+            quat_diff.x = config["x"].as<double>();
+            quat_diff.y = config["y"].as<double>();
+            quat_diff.z = config["z"].as<double>();
+            quat_diff.w = config["w"].as<double>();
         } else {
             std::cerr << "Quaternion data not found in YAML file, using unit quaternion: " << yaml_path << std::endl;
             quat_diff.x = 0.0;
